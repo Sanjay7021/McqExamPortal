@@ -1,0 +1,34 @@
+.header {
+    color: white;
+    /* overflow-x: hidden; */
+  }
+  
+  /* .upperredline{
+      background-color: red;
+      height: 10px;
+      overflow-x: hidden;
+  
+  } */
+  .container {
+    margin-top: -20px;
+    color: white;
+    height: 80px;
+    /* background-color: grey; */
+  }
+  
+  .img1 {
+    height: 300px;
+  }
+  .header-right {
+    /* margin-left: 500px; */
+    display: "flex";
+    justify-content: "flex-end";
+    align-items: "center";
+    color: white;
+  }
+  .button {
+    width: 90.88px;
+    color: white;
+    color: blue;
+  }
+  

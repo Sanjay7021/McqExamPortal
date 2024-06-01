@@ -1,0 +1,201 @@
+
+
+import { useState } from 'react'
+
+import './App.css'
+import axios from 'axios';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
+function App() {
+
+  type userType = {
+    name: string,
+    email: string,
+    role: string,
+    password: string,
+    phone: number,
+    address: string,
+    subName: string
+  }
+  // console.log(userForm);  
+  const [formData, setData] = useState<userType>({
+    name: "",
+    email: "",
+    role: "",
+    password: "",
+    phone: 0,
+    address: "",
+    subName: ""
+  });
+
+  const getData = (e: any) => {
+    const { name, value, checked, type } = e.target;
+    setData({ ...formData, [name]: value })
+  }
+
+
+  /* Reset button functionality */
+  const handleReset = () => {
+    // setData({
+    //   name: "",
+    //   email: "",
+    //   role:"",
+    //   password:""
+    // })
+  }
+
+
+  /* submit button functionality *createEmployee */
+  const handlerSubmit = async (e: any) => {
+    const { id } = e.target;
+    if (id == "update") {
+    } else {
+      if (Object.keys(formData).length == 0) {
+        console.log("no data")
+      } else {
+        e.preventDefault();
+        console.log(formData);
+        try {
+          await axios.post('http://localhost:3004/user/createUser', formData);
+          toast.success(`${formData.role} created successfully`)
+        } catch (error: any) {
+          toast.error(error.response.data);
+          console.log(error);
+          
+        }
+
+        handleReset();
+      }
+    }
+  }
+
+  const hadlerLogin = async (e: any) => {
+    e.preventDefault();
+    console.log('looged in');
+    try {
+      const response = await axios.post('http://localhost:3004/user/login', formData);
+
+      if (response.status == 200) {
+        sessionStorage.setItem('token', response.data.token);
+        toast.success("user logged in successfully")
+      }
+    } catch (err: any) {
+      toast.error(err.response.data);
+      console.log(err.response.data);
+
+    }
+  }
+
+  const hadlelogout = (e: any) => {
+    e.preventDefault();
+    sessionStorage.setItem('token', "");
+    toast.success("Logged out")
+    console.log('user logged out');
+
+  }
+
+  const hadlerSubject = async (e: any) => {
+    e.preventDefault();
+    const AUTH_TOKEN = sessionStorage.getItem('token');
+    try {
+      const response = await axios({
+        method: 'post',
+        url: 'http://localhost:3004/subject/createsubject',
+        data: formData,
+        headers: { 'x-auth-token': AUTH_TOKEN }
+      });
+
+      toast.success(`${formData.subName} subject added`)
+      
+    } catch (error:any) {
+      toast.error(error.response.data);
+      console.log(error);
+      
+    }
+    // console.log(response);
+
+  }
+
+
+  return (
+    <>
+      <div >
+        <form onSubmit={handlerSubmit}>
+          <h3 style={{ alignItems: "center" }}>SIGNUP STUDENT / FACULTY</h3>
+
+          <div className="form-group center">
+            <label >Name:</label>
+            <input type="text" className="form-control create_name" id="formGroupExampleInput" name='name' value={formData.name} onChange={getData}
+              placeholder="Enter Name" />
+          </div>
+          <div className="form-group">
+            <label>Email:</label>
+            <input type="text" className="form-control create_email" id="formGroupExampleInput2" name='email' value={formData.email} onChange={getData}
+              placeholder="Enter Email" />
+          </div><div className="form-group">
+            <label>role:</label>
+            <input type="text" className="form-control create_email" id="formGroupExampleInput2" name='role' value={formData.role} onChange={getData}
+              placeholder="Enter role" />
+          </div>
+          <div className="form-group">
+            <label>password:</label>
+            <input type="text" className="form-control create_email" id="formGroupExampleInput2" name='password' value={formData.password} onChange={getData}
+              placeholder="Enter password" />
+          </div>
+          <div className="form-group">
+            <label>phone:</label>
+            <input type="number" className="form-control create_email" id="formGroupExampleInput2" name='phone' value={formData.phone} onChange={getData}
+              placeholder="Enter phone" />
+          </div>
+          <div className="form-group">
+            <label>address:</label>
+            <input type="text" className="form-control create_email" id="formGroupExampleInput2" name='address' value={formData.address} onChange={getData}
+              placeholder="Enter adddress" />
+          </div>
+
+          <button type="reset" className="btn btn-warning" id="create_remove" onClick={handleReset}>RESET</button>
+          <button type="submit" className="btn btn-success" id="create">CREATE</button>
+        </form>
+      </div>
+      <div>
+        <form onSubmit={hadlerLogin}>
+          <h3 style={{ alignItems: "center" }}>Login User</h3>
+
+          <div className="form-group">
+            <label>Email:</label>
+            <input type="text" className="form-control create_email" id="formGroupExampleInput2" name='email' value={formData.email} onChange={getData}
+              placeholder="Enter Email" />
+          </div>
+          <div className="form-group center">
+            <label >Password:</label>
+            <input type="text" className="form-control create_name" id="formGroupExampleInput" name='password' value={formData.password} onChange={getData}
+              placeholder="Enter Name" />
+          </div>
+          <button type="submit" className="btn btn-success" id="create">Login</button>
+          <button className="btn btn-success" id="logout" onClick={hadlelogout}>Log Out</button>
+        </form>
+      </div>
+      <div>
+        <form onSubmit={hadlerSubject}>
+          <h3 style={{ alignItems: "center" }}>Create Subject</h3>
+
+          <div className="form-group">
+            <label>Subject Name:</label>
+            <input type="text" className="form-control create_email" id="formGroupExampleInput2" name='subName' value={formData.subName} onChange={getData}
+              placeholder="Enter Subject name" />
+          </div>
+          <button type="submit" className="btn btn-success" id="create">Insert</button>
+        </form>
+      </div>
+      <div>
+        {/* <button onClick={notify}>Notify!</button> */}
+        <ToastContainer />
+      </div>
+
+    </>
+  )
+}
+
+export default App
