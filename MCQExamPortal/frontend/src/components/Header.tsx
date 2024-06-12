@@ -24,6 +24,9 @@ function Header() {
     );
   }, [authContext.user]);
   
+  console.log("from ",authContext._flag);
+  console.log("from ",authContext._flag);
+  
   return (
     <div className="header" style={{backgroundColor:'black'}}>
       <div className="upperredline" style={{backgroundColor:'black'}}></div>
@@ -62,15 +65,17 @@ function Header() {
             <Button
               key={index}
               variant="text"
+              color="primary"
               sx={{ color: "#f14d84", textTransform: "capitalize" }}
               onClick={() => {
                 navigate(item.route);
               }}
+              disabled={authContext._flag == 1 ? true:false}
             >
               {item.name}
             </Button>
           ))}
-
+            
           {/* <Button
             variant="outlined"
             color="error"

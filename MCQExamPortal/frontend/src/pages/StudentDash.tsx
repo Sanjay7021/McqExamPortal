@@ -4,12 +4,15 @@ import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import createFinalResultServices from "../service/finalResultServices";
 import ConfirmationDialog from "../components/ConfirmationDialog";
+import { useAuthContext } from "../context/auth";
 // import {createBrowserHistory} from 'react-router-dom';
 export default function Home() {
 
   const [examData, setExamData]:any = useState();
   const [resultData, setResultData]:any = useState();
   const [open, setOpen]:any = useState(false);
+
+  const authContext = useAuthContext();
     const getExamData = () => {
         createExamServices.getExams().then((res)=>{
             // console.log(res.data);
@@ -114,7 +117,7 @@ export default function Home() {
                                     <td>{value.marksPerQue}</td>
                                     <td>{value.totalQue * value.marksPerQue}</td>
                                     {/* <td style={{ color: value.status === 'active' ? 'green' : 'red' }}>{value.status}</td> */}
-                                    <td><button className="btn btn-primary edit1" id={key} onClick={()=> navigate(`exam-started/${value._id}/duration/${seconds(value.duration)}`)} disabled={isExamAllreadyGiven(value._id)} style={{backgroundColor:isExamAllreadyGiven(value._id)?"green":""}}>{isExamAllreadyGiven(value._id)?"Finished":"Start"}</button></td>
+                                    <td><button className="btn btn-primary edit1" id={key} onClick={()=> {navigate(`exam-started/${value._id}/duration/${seconds(value.duration)}`); authContext.setFlag(1)}} disabled={isExamAllreadyGiven(value._id)} style={{backgroundColor:isExamAllreadyGiven(value._id)?"green":""}}>{isExamAllreadyGiven(value._id)?"Finished":"Start"}</button></td>
                                 </tr>))}
                     </tbody>
                 </table>

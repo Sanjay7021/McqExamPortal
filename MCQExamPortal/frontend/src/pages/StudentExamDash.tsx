@@ -5,6 +5,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import ReactPaginate from 'react-paginate';
 import '../pages/StudentExamDash.css'
 import ResultServices from '../service/resultServices';
+import { useAuthContext } from '../context/auth';
 
 let total = 0;
 
@@ -101,10 +102,12 @@ function Items({ currentItems }: { currentItems: any }) {
 
 
 export default function StudentExamDash() {
+
     const { examId ,duration1} = useParams();
     const itemsPerPage = 1;
     const [mcqData, setMCQData]: any = useState();
 
+    const authContext = useAuthContext();
     const getMCQData = () => {
         createMCQervices.getMCQ().then((res) => {
             console.log(typeof res.data.ExamID);
@@ -163,18 +166,42 @@ export default function StudentExamDash() {
     
     useEffect(()=>{
         const data = `/StudentDashboard/exam-started/${examId}/duration/${duration1}`
-        console.log(
-            "from the effect",data
-        );
-        if(location.pathname != `/StudentDashboard/exam-started/${examId}/duration/${duration1}`)
-        {
-            nevigate(data);
+        localStorage.setItem('location',data);
+    },[])
+
+    useEffect(()=>{
+        const hadleBeforeUnload = (event:any) => {
+            event.preventDefault();
+            event.returnValue = '';
+        }
+        window.addEventListener('beforeunload',hadleBeforeUnload);
+        return () =>{
+            window.removeEventListener('beforeunload',hadleBeforeUnload)
+        }
+    },[]);
+    
+    useEffect(()=>{
+        const handleTabSwitching = () => {
+            if(document.hidden){
+                console.log('You are doing something');
+                // authContext.setFlag(0)
+                
+            }else{
+                console.log('Tab is visible again');
+                // authContext.setFlag(1) 
+            }
+            if(document.onchange){
+                alert('tab changed')
+            }
             
         }
-        console.log(location);
-        
-    },[location])
 
+        document.addEventListener('visibilitychange',handleTabSwitching)
+        return () =>{
+            window.removeEventListener('visibilitychange',handleTabSwitching)
+        }
+    },[]);
+    
 
     return (
         <div id="container" style={{
