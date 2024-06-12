@@ -11,6 +11,10 @@ const resultSchema = new Schema({
         type:Schema.Types.ObjectId,
         ref:'mcq'
     },
+    studentAns:{
+        type:String
+    }
+    ,
     count:{
         type:Number,
         required:true

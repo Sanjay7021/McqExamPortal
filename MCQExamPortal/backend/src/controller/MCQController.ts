@@ -29,3 +29,20 @@ export async function getMCQ (req:any,res:any,next:any){
         })    
     }
 }
+
+export async function pagination (req:any,res:any,next:any){
+    try{
+        const page = req.query.page * 1 || 1;
+        console.log(page);
+        
+        const ITEM_PER_PAGE = req.query.limit * 1 || 2;
+
+        const data =await MCQModel.find({}).skip((page - 1) * ITEM_PER_PAGE).limit(ITEM_PER_PAGE);
+        // console.log(data);
+        
+        res.send(data);
+
+    }catch(err){
+        return res.send(err);
+    }
+}
